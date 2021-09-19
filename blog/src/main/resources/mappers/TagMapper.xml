@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.TagMapper">
+  <resultMap id="tag" type="com.yk.entity.Tag">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="tag_name" jdbcType="VARCHAR" property="name" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+  </resultMap>
+  <resultMap id="tagBlogCount" type="com.yk.model.dto.TagBlogCount">
+    <id column="tag_id" jdbcType="BIGINT" property="id" />
+    <result column="tag_name" jdbcType="VARCHAR" property="name" />
+    <result column="blog_count" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, tag_name, color
+  </sql>
+
+
+
+<!--  添加标签-->
+  <insert id="addTag" parameterType="com.yk.entity.Tag" useGeneratedKeys="true" keyProperty="id">
+    insert into tag (tag_name,color) values (#{name},#{color});
+  </insert>
+
+<!--更新标签  -->
+  <update id="updateTag" parameterType="com.yk.entity.Tag">
+    update tag
+    set tag_name = #{name},color = #{color}
+    where id =#{id}
+  </update>
+
+<!--  删除标签-->
+  <delete id="deleteTag">
+    delete from tag
+    where id = #{id}
+  </delete>
+
+  <!--  查询所有标签-->
+  <select id="selectTags" resultMap="tag">
+    select *
+    from tag
+  </select>
+
+<!--  通过id查询-->
+    <select id="getTagById" resultType="com.yk.entity.Tag">
+      select *
+      from tag
+      where id = #{id}
+    </select>
+
+    <select id="getTagBlogCount" resultMap="tagBlogCount">
+      select tag_id, count(tag_id) as blog_count from blog_tag group by tag_id
+    </select>
+
+  <select id="getTagList" resultMap="tag">
+    select *
+    from tag
+  </select>
+
+  <!--  查询所有标签-->
+  <select id="selectTagsNoId" resultMap="tag">
+    select tag_name,color from tag
+  </select>
+</mapper>

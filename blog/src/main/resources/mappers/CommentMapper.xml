@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.yk.model.dto.CommentInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="is_published" jdbcType="BIT" property="published" />
+    <result column="is_AdminComment" jdbcType="BIT" property="adminComment" />
+    <result column="page" jdbcType="INTEGER" property="page" />
+    <result column="is_notice" jdbcType="BIT" property="notice" />
+    <result column="blog_id" jdbcType="BIGINT" property="blogId" />
+    <result column="parent_comment_id" jdbcType="BIGINT" property="parentCommentId" />
+    <result column="website" jdbcType="VARCHAR" property="website" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, nickname, email, content, avatar, create_time, ip, is_published, is_admin_comment,
+    page, is_notice, blog_id, parent_comment_id, website, qq
+  </sql>
+
+
+<!--  通过id更新发布状态-->
+  <update id="updatePublished">
+    update comment
+    set is_published=#{published}
+    where id=#{id}
+  </update>
+
+  <!--  通过id更新邮箱提醒状态-->
+  <update id="updateNotice">
+    update comment
+    set is_notice=#{notice}
+    where id=#{id}
+  </update>
+
+<!--  通过id更新评论-->
+  <update id="updateCommentById">
+    update comment
+    set avatar=#{avatar},content=#{content},email=#{email},
+    ip=#{ip},nickname=#{nickname},website=#{website}
+    where id = #{id}
+  </update>
+
+
+  <!--  评论删除-->
+  <delete id="deleteCommentByBlogId">
+    delete
+    from comment
+    where blog_id = #{id}
+  </delete>
+
+  <delete id="deleteCommentById">
+    delete
+    from comment
+    where id = #{id} or parent_comment_id = #{id}
+  </delete>
+
+
+  <!--  评论查询-->
+  <select id="selectComments" resultMap="BaseResultMap">
+    select *
+    from comment
+  </select>
+
+<!--  通过id查询-->
+  <select id="selectById" resultType="com.yk.entity.Comment">
+    select *
+    from comment
+    where id = #{id}
+  </select>
+
+<!--  查询评论数-->
+    <select id="getCommentCount" resultType="java.lang.Integer">
+      select count(*)
+      from comment
+    </select>
+<!--  通过id查询-->
+  <select id="getCommentsById" resultType="com.yk.model.dto.CommentInfo">
+    select *
+    from comment
+    where blog_id = #{blogId}
+  </select>
+<!--  查询特定页面评论-->
+  <select id="getCommentsByPage" resultType="com.yk.model.dto.CommentInfo">
+    select *
+    from comment
+    where page = #{page}
+  </select>
+</mapper>

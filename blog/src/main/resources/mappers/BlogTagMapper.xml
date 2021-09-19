@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.BlogTagMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.BlogTag">
+    <result column="blog_id" jdbcType="BIGINT" property="blogId" />
+    <result column="tag_id" jdbcType="BIGINT" property="tagId" />
+  </resultMap>
+
+<!--  添加blog_tag-->
+    <insert id="addBlogTag">
+      insert into blog_tag (blog_id,tag_id) values (#{blogId},#{tagId});
+    </insert>
+
+    <!--  blog_tag删除-->
+  <delete id="deleteBlogTagByBlogId">
+    delete
+    from blog_tag
+    where blog_id = #{id}
+  </delete>
+
+<!--  查询ids-->
+    <select id="getBlogId" resultType="java.lang.Integer">
+      select bt.blog_id from blog_tag as bt
+      left join tag as t on bt.tag_id = t.id
+      where t.tag_name = #{tagName}
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.ScheduleJobMapper">
+  <resultMap id="BaseResultMap" type="com.yk.model.dto.ScheduleJobInfo">
+    <id column="job_id" jdbcType="BIGINT" property="jobId" />
+    <result column="bean_name" jdbcType="VARCHAR" property="beanName" />
+    <result column="method_name" jdbcType="VARCHAR" property="methodName" />
+    <result column="params" jdbcType="VARCHAR" property="params" />
+    <result column="cron" jdbcType="VARCHAR" property="cron" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    job_id, bean_name, method_name, params, cron, status, remark, create_time
+  </sql>
+<!--  添加-->
+  <insert id="addJob" useGeneratedKeys="true" keyProperty="jobId">
+    insert into schedule_job
+    (bean_name, method_name, params, cron, status, remark, create_time)
+    values (#{beanName},#{methodName},#{params},#{cron},#{status},#{remark},#{createTime});
+  </insert>
+  <!--  更新status-->
+  <update id="updateJobStatus">
+    update schedule_job
+    set status = #{status}
+    where job_id = #{jobId}
+  </update>
+<!--  编辑操作-->
+  <update id="editJob">
+    update schedule_job
+    set bean_name = #{beanName},method_name = #{methodName},
+    params = #{params},cron = #{cron},remark = #{remark}
+    where job_id = #{jobId}
+  </update>
+<!--  删除操作-->
+  <delete id="deleteById">
+    delete from schedule_job
+    where job_id = #{jobId}
+  </delete>
+  <!--  查询所有-->
+  <select id="getJobList" resultMap="BaseResultMap">
+    select * from schedule_job
+  </select>
+</mapper>

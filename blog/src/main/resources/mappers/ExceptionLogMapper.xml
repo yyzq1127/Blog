@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.ExceptionLogMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.ExceptionLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uri" jdbcType="VARCHAR" property="uri" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="param" jdbcType="VARCHAR" property="param" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="ip_source" jdbcType="VARCHAR" property="ipSource" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="user_agent" jdbcType="VARCHAR" property="userAgent" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yk.entity.ExceptionLog">
+    <result column="error" jdbcType="LONGVARCHAR" property="error" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uri, method, param, description, ip, ip_source, os, browser, create_time, user_agent
+  </sql>
+  <sql id="Blob_Column_List">
+    error
+  </sql>
+<!--  添加异常日志-->
+    <insert id="addOperationLog" keyProperty="id" useGeneratedKeys="true">
+      insert into exception_log
+      (uri, method, param, description, ip, ip_source, os, browser, create_time, user_agent)
+      values (#{uri},#{method},#{param},#{description},#{ip},#{ipSource},#{os},#{browser},#{createTime},#{userAgent});
+    </insert>
+<!--  删除异常日志-->
+    <delete id="delete">
+    delete from exception_log
+    where id = #{id}
+  </delete>
+<!--查询异常日志-->
+  <select id="getExceptionLogs" resultType="com.yk.entity.ExceptionLog">
+    select * from exception_log
+    <if test="date1 != null">
+      where create_time between #{date1} and #{date2}
+    </if>
+  </select>
+
+</mapper>

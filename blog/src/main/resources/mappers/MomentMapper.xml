@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.MomentMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.Moment">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="likes" jdbcType="INTEGER" property="likes" />
+    <result column="is_published" jdbcType="BIT" property="published" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <!--<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="Moment">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>-->
+  <sql id="Base_Column_List">
+    id, create_time, likes, is_published
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+<!--  添加动态-->
+  <insert id="addMoment">
+    insert into moment
+           (create_time,likes,is_published,content)
+    values (#{createTime},#{likes},#{published},#{content})
+  </insert>
+  <!--  更新发布状态-->
+  <update id="updatePublished">
+    update moment
+    set is_published = #{published}
+    where id = #{id}
+  </update>
+<!--  根据id更新moment-->
+  <update id="updateMoment" parameterType="com.yk.entity.Moment">
+    update moment
+    set create_time = #{createTime},likes = #{likes},is_published = #{published},
+    content = #{content}
+    where id = #{id}
+  </update>
+<!--  点赞-->
+    <update id="like">
+      update moment
+      set likes = likes+1
+      where id = #{id}
+    </update>
+    <!--  根据id删除moment-->
+  <delete id="deleteMomentById">
+    delete from moment
+    where id = #{id}
+  </delete>
+
+  <!--  查询所有moment-->
+  <select id="selectMoments" resultMap="BaseResultMap">
+    select *
+    from moment
+  </select>
+<!--  根据id查询moment-->
+  <select id="selectMomentById" resultType="com.yk.entity.Moment">
+    select *
+    from moment
+    where id = #{id}
+  </select>
+</mapper>

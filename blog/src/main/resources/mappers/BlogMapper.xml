@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.BlogMapper">
+  <resultMap id="blog" type="com.yk.entity.Blog">
+    <id property="id" column="id"/>
+    <result property="title" column="title"/>
+    <result property="firstPicture" column="first_picture"/>
+    <result property="content" column="content"/>
+    <result property="description" column="description"/>
+    <result property="published" column="is_published"/>
+    <result property="recommend" column="is_recommend"/>
+    <result property="appreciation" column="is_appreciation"/>
+    <result property="commentEnabled" column="is_comment_enabled"/>
+    <result property="top" column="is_top"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+    <result property="views" column="views"/>
+    <result property="words" column="words"/>
+    <result property="readTime" column="read_time"/>
+    <result property="password" column="password"/>
+    <association property="user" javaType="com.yk.entity.User">
+      <id property="id" column="user_id"/>
+      <result property="userName" column="username"/>
+      <result property="nickName" column="nickname"/>
+      <result property="avatar" column="avatar"/>
+      <result property="email" column="email"/>
+      <result property="createTime" column="user_create_time"/>
+      <result property="updateTime" column="user_update_time"/>
+      <result property="role" column="role"/>
+    </association>
+    <association property="category" javaType="com.yk.entity.Category">
+      <id property="id" column="category_id"/>
+      <result property="name" column="category_name"/>
+    </association>
+    <collection property="tags" javaType="com.yk.entity.Tag">
+      <id property="id" column="tag_id"/>
+      <result property="name" column="tag_name"/>
+      <result property="color" column="color"/>
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, title, first_picture, is_published, is_recommend, is_appreciation, is_comment_enabled,
+    create_time, update_time, views, words, read_time, category_id, is_top, password,
+    user_id
+  </sql>
+  <sql id="Blob_Column_List">
+    content, description
+  </sql>
+
+<!--  添加blog-->
+<!-- useGeneratedKeys="true" keyProperty="id"
+      将自增id赋予实体类中!
+      -->
+  <insert id="addBlog" useGeneratedKeys="true" keyProperty="id">
+    insert into blog
+           (title,first_picture,content,description,is_recommend, is_published, is_appreciation,
+           is_comment_enabled,is_top, create_time, update_time, views,words, read_time, category_id, password)
+    values (#{title},#{firstPicture},#{content},#{description},#{recommend},#{published},#{appreciation},
+            #{commentEnabled},#{top},#{createTime},#{updateTime},#{views},#{words},#{readTime},#{category.id},#{password})
+  </insert>
+  <!--更新blog-->
+  <update id="updateBlog" parameterType="com.yk.model.dto.BlogInfo">
+    update blog set title=#{title}, first_picture=#{firstPicture}, content=#{content}, description=#{description},
+        is_recommend=#{recommend}, is_published=#{published}, is_appreciation=#{appreciation},
+          is_comment_enabled=#{commentEnabled},
+        is_top=#{top}, create_time=#{createTime}, update_time=#{updateTime}, views=#{views},
+        words=#{words}, read_time=#{readTime}, category_id=#{category.id}, password=#{password}
+        where id=#{id}
+  </update>
+<!--  更新置顶状态-->
+  <update id="updateTop">
+    update blog
+    set is_top = #{top}
+    where id = #{id}
+  </update>
+  <!--  更新推荐状态-->
+  <update id="updateRecommend">
+    update blog
+    set is_recommend = #{recommend}
+    where id = #{id}
+  </update>
+
+<!--  更新Visibility-->
+  <update id="updateVisibility" parameterType="com.yk.model.dto.Visibility">
+    update blog
+    set is_appreciation=#{visibility.appreciation},is_comment_enabled=#{visibility.commentEnabled},is_published=#{visibility.published},
+    is_recommend=#{visibility.recommend},is_top=#{visibility.top},password=#{visibility.password}
+    where id =#{id}
+  </update>
+
+
+  <!--  多条件查询blogs-->
+<!--     <![CDATA[      ]]>   -->
+
+
+  <!--  多条件查询blogs-->
+  <select id="getDataByQuery" resultMap="blog">
+    select b.id, b.title, b.first_picture, b.create_time, b.update_time, b.is_published, b.is_recommend,
+    b.is_appreciation,b.is_comment_enabled, b.is_top, b.password,
+    c.id as category_id, c.category_name
+    from blog as b left join category as c on b.category_id=c.id
+    <where>
+      <if test="title!=null and title!=''">
+        b.title like concat('%',#{title},'%')
+      </if>
+      <if test="categoryId!=null">
+        and b.category_id=#{categoryId}
+      </if>
+    </where>
+  </select>
+
+
+  <!--  删除blog-->
+  <delete id="deleteBlogById">
+        delete from blog where id=#{id}
+    </delete>
+
+<!--  通过id查询Blog-->
+  <select id="selectBlogById" resultMap="blog">
+    select b.id, b.title, b.first_picture, b.content, b.description, b.is_recommend, b.is_published,
+        b.is_appreciation,
+        b.is_comment_enabled, b.is_top, b.create_time, b.update_time, b.views, b.words, b.read_time, b.password,
+        c.id as category_id, c.category_name,
+        bt.tag_id as tag_id, t.tag_name as tag_name, t.color
+        from (((blog as b left join category as c on b.category_id=c.id) left join blog_tag as bt on b.id=bt.blog_id)
+        left join tag as t on bt.tag_id=t.id)
+        where b.id=#{id}
+  </select>
+<!--  查询blogId和title-->
+    <select id="queryBlogIdAndTitle" resultType="com.yk.model.dto.BlogList">
+      select id,title
+      from blog
+    </select>
+<!--  查询blog数量-->
+    <select id="getBlogCount" resultType="java.lang.Integer">
+      select count(*)
+      from blog
+    </select>
+
+  <select id="getIdAndCount" resultType="java.util.Map">
+    select category_id id, count(category_id) counts from blog group by category_id
+  </select>
+
+
+  <resultMap id="blogInfo" type="com.yk.model.dto.BlogInfo">
+    <id property="id" column="id"/>
+    <result property="title" column="title"/>
+    <result property="description" column="description"/>
+    <result property="createTime" column="create_time"/>
+    <result property="views" column="views"/>
+    <result property="words" column="words"/>
+    <result property="readTime" column="read_time"/>
+    <result property="top" column="is_top"/>
+    <result property="password" column="password"/>
+    <association property="category" javaType="com.yk.entity.Category">
+      <result property="name" column="category_name"/>
+    </association>
+    <collection property="tags" javaType="com.yk.entity.Tag">
+      <id property="id" column="tag_id"/>
+      <result property="name" column="tag_name"/>
+      <result property="color" column="color"/>
+    </collection>
+  </resultMap>
+<!--  查询所有bolg-->
+  <select id="getBlogByIsPublished" resultMap="blogInfo">
+    select b.id, b.title, b.description, b.is_top, b.create_time, b.views, b.words, b.read_time, b.password,
+    c.category_name,
+    t.tag_name as tag_name,t.id as tag_id,t.color
+    from blog as b
+    left join category as c on b.category_id=c.id
+    left join blog_tag as bt on b.id=bt.blog_id
+    left join tag as t on bt.tag_id=t.id
+    where b.is_published=true
+  </select>
+  <!--select b.id, b.title, b.first_picture, b.content, b.description, b.is_recommend, b.is_published,
+  b.is_appreciation,
+  b.is_comment_enabled, b.is_top, b.create_time, b.update_time, b.views, b.words, b.read_time, b.password,
+  c.id as category_id, c.category_name,
+  bt.tag_id as tag_id, t.tag_name as tag_name, t.color
+  from (((blog as b left join category as c on b.category_id=c.id)
+  left join blog_tag as bt on b.id=bt.blog_id)
+  left join tag as t on bt.tag_id=t.id)-->
+<!--  查询随机blog-->
+    <select id="getRandomBlog" resultType="com.yk.model.dto.RandomBlog">
+      select id,title,first_picture firstPicture,create_time createTime,password
+      from blog
+      where is_published = true order by rand() limit #{randomBlogPageSize};
+    </select>
+<!--  查询最新blog-->
+  <select id="getNewBlog" resultType="com.yk.model.dto.NewBlog">
+    select id,title from blog
+    where is_published = true order by update_time limit #{newBlogPageSize}
+  </select>
+<!--  查询blog-->
+  <select id="getBlogById" resultMap="blog">
+    SELECT
+	b.id,
+	b.title,
+	b.first_picture,
+	b.content,
+	b.description,
+	b.is_recommend,
+	b.is_published,
+	b.is_appreciation,
+	b.is_comment_enabled,
+	b.is_top,
+	b.create_time,
+	b.update_time,
+	b.views,
+	b.words,
+	b.read_time,
+	b. PASSWORD,
+	c.id AS category_id,
+	c.category_name,
+	bt.tag_id AS tag_id,
+	t.tag_name AS tag_name,
+	t.color
+FROM
+	blog AS b
+LEFT JOIN category AS c ON b.category_id = c.id
+LEFT JOIN blog_tag AS bt ON b.id = bt.blog_id
+LEFT JOIN tag AS t ON bt.tag_id = t.id
+WHERE
+	b.id = #{id}
+  </select>
+
+<!--  查询评论开关-->
+  <select id="getIsCommentEnabledById" resultType="java.lang.Boolean">
+    select is_comment_enabled from blog
+    where id=#{blogId}
+  </select>
+<!--  通过分类名查询blog-->
+    <select id="getBlogByCategoryName" resultMap="blog">
+      select * from blog as b
+      left join category c on c.id = b.category_id
+      where c.category_name = #{categoryName}
+</select>
+
+
+  <resultMap id="archiveBlog" type="com.yk.model.dto.ArchiveBlog">
+    <result property="id" column="id"/>
+    <result property="title" column="title"/>
+    <result property="day" column="day1"/>
+    <result property="password" column="password"/>
+<!--    <result property="privacy" column="id"/>-->
+  </resultMap>
+
+<!--  查询所有日期并排序-->
+    <select id="getDay" resultType="java.lang.String">
+      select date_format(create_time,"%Y年%m月")
+      from blog
+      where is_published = true
+      group by date_format(create_time,"%Y年%m月")
+      order by date_format(create_time,"%Y年%m月") desc
+    </select>
+<!--  通过create_time查询blog列表-->
+  <select id="getBLogByDayIsPublish" resultMap="archiveBlog">
+    select id,title,password,date_format(create_time,"%Y年%m月") as day1
+    from blog
+    where is_published = true and date_format(create_time,"%Y年%m月") = #{s}
+    order by date_format(create_time,"%Y年%m月") desc
+  </select>
+<!--  查询blog数量-->
+  <select id="getCountIsPublish" resultType="java.lang.Integer">
+    select count(*) from blog
+    where is_published = true
+  </select>
+<!--  查询pwd-->
+  <select id="getPasswordById" resultType="java.lang.String">
+    select password from blog
+    where id = #{blogId}
+  </select>
+  <select id="getBlogIsPublishById" resultMap="blog">
+    select b.id, b.title, b.first_picture, b.content, b.description, b.is_recommend, b.is_published,
+    b.is_appreciation,
+    b.is_comment_enabled, b.is_top, b.create_time, b.update_time, b.views, b.words, b.read_time, b.password,
+    c.id as category_id, c.category_name,
+    bt.tag_id as tag_id, t.tag_name as tag_name, t.color
+    from (((blog as b left join category as c on b.category_id=c.id)
+        left join blog_tag as bt on b.id=bt.blog_id)
+        left join tag as t on bt.tag_id=t.id)
+    <where>
+      is_published = true
+      and b.id in
+      <foreach collection="list" item="id" open="(" separator="," close=")" index="">
+        #{id}
+      </foreach>
+    </where>
+  </select>
+  <!-- <sql id="Base_Column_List">
+     id, title, first_picture, is_published, is_recommend, is_appreciation, is_comment_enabled,
+     create_time, update_time, views, words, read_time, category_id, is_top, password,
+     user_id
+   </sql>-->
+</mapper>

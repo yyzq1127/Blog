@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.CategoryMapper">
+  <!--<resultMap id="BaseResultMap" type="Category">
+    <id column="category_id" jdbcType="TINYINT" property="categoryId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="last_update" jdbcType="TIMESTAMP" property="lastUpdate" />
+  </resultMap>-->
+  <sql id="Base_Column_List">
+    id, category_name
+  </sql>
+
+<!--  更新分类-->
+  <update id="updateCategory" parameterType="com.yk.entity.Category">
+    update category
+    set category_name = #{name}
+    where id =#{id}
+  </update>
+
+<!--  删除分类-->
+  <delete id="deleteCategoryById">
+    delete from category
+    where id =#{id}
+  </delete>
+
+  <!--查询所有分类-->
+  <select id="selectCategories" resultType="com.yk.entity.Category">
+    select id,category_name as name
+    from category
+  </select>
+
+<!--  通过id查询分类-->
+  <select id="getCategoryById" resultType="com.yk.entity.Category">
+    select *
+    from category
+    where id = #{id}
+  </select>
+
+<!--  通过name查询分类-->
+  <select id="getCategoryByName" resultType="com.yk.entity.Category">
+    select * from category
+    where category_name = #{cate}
+  </select>
+<!--&lt;!&ndash;  查询分类id及其对应数量&ndash;&gt;-->
+<!--  <select id="getIdAndCount" resultType="java.util.Map">-->
+<!--    select id,count(id) counts-->
+<!--      from category-->
+<!--  </select>-->
+
+
+  <!--添加新分类-->
+  <insert id="addCategory" parameterType="com.yk.entity.Category">
+    insert into category (id,category_name) values (#{id},#{name})
+  </insert>
+
+
+</mapper>

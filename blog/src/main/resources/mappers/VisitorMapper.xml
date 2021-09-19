@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.VisitorMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.Visitor">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="ip_source" jdbcType="VARCHAR" property="ipSource" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
+    <result column="pv" jdbcType="INTEGER" property="pv" />
+    <result column="user_agent" jdbcType="VARCHAR" property="userAgent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uuid, ip, ip_source, os, browser, create_time, last_time, pv, user_agent
+  </sql>
+  <delete id="delete">
+    delete from visitor
+    where id = #{id}
+    and uuid = #{uuid}
+  </delete>
+  <select id="getVisitor" resultType="com.yk.entity.Visitor">
+    select * from visitor
+    <if test="date1 != null">
+      where create_time between #{date1} and #{date2}
+    </if>
+  </select>
+</mapper>

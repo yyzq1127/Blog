@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.CityVisitorMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.CityVisitor">
+    <id column="city" jdbcType="VARCHAR" property="city" />
+    <result column="uv" jdbcType="INTEGER" property="uv" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    city, uv
+  </sql>
+
+  <select id="getCityVisitorList" resultMap="BaseResultMap">
+    select city, uv from city_visitor order by uv desc
+  </select>
+
+</mapper>

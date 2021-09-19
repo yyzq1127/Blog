@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.VisitLogMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.VisitLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="uri" jdbcType="VARCHAR" property="uri" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="param" jdbcType="VARCHAR" property="param" />
+    <result column="behavior" jdbcType="VARCHAR" property="behavior" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="ip_source" jdbcType="VARCHAR" property="ipSource" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="times" jdbcType="INTEGER" property="times" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="user_agent" jdbcType="VARCHAR" property="userAgent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uuid, uri, method, param, behavior, content, remark, ip, ip_source, os, browser,
+    times, create_time, user_agent
+  </sql>
+
+  <!--  查询今日浏览次数
+      -curdate()得到当前日期
+      -curtime()得到当前时间
+      -->
+  <select id="countVisitLogByToday" resultType="java.lang.Integer">
+    select count(*) from visit_log where date(create_time)=curdate()
+  </select>
+
+  <!--  删除数据-->
+  <delete id="delete">
+    delete from visit_log
+    where id = #{id}
+  </delete>
+
+  <!--  <![CDATA[  and create_time<=#{date2}    ]]>  -->
+  <!--  条件查询-->
+  <select id="getVisitLogs" resultType="com.yk.entity.VisitLog">
+    select * from visit_log
+    <where>
+      <if test="date1 != null">
+        and create_time between #{date1} and #{date2}
+      </if>
+      <if test="uuid != null and uuid != ''">
+        and uuid = #{uuid}
+      </if>
+    </where>
+
+  </select>
+
+</mapper>

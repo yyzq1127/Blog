@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.VisitRecordMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.VisitRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pv" jdbcType="INTEGER" property="pv" />
+    <result column="uv" jdbcType="INTEGER" property="uv" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pv, uv, date
+  </sql>
+<!--  查询所有VisitRecord-->
+  <select id="getVisitRecords" resultType="com.yk.entity.VisitRecord">
+    select * from visit_record
+  </select>
+</mapper>

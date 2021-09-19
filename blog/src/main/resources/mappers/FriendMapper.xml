@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.FriendMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.Friend">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="website" jdbcType="VARCHAR" property="website" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="is_published" jdbcType="BIT" property="published" />
+    <result column="views" jdbcType="INTEGER" property="views" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, nickname, description, website, avatar, is_published, views, create_time
+  </sql>
+
+
+<!--  添加友链-->
+  <insert id="addFriend" useGeneratedKeys="true" keyProperty="id">
+    insert into friend (nickname,description,website,avatar,is_published,views,create_time)
+    values (#{nickname},#{description},#{website},#{avatar},#{published},#{views},#{createTime});
+  </insert>
+
+
+  <!--  更新公开状态-->
+  <update id="updatePublished">
+    update friend
+    set is_published = #{published}
+    where id = #{id}
+  </update>
+
+<!--  编辑友链-->
+  <update id="updateFriend">
+    update friend
+    set nickname=#{nickname},description=#{description},website=#{website},
+    avatar=#{avatar},views=#{views},create_time=#{createTime},is_published=#{published}
+    where id = #{id}
+  </update>
+
+<!--  删除友链-->
+  <delete id="deleteFriendById">
+    delete from friend
+    where id=#{id}
+  </delete>
+
+  <!--  查询友链-->
+  <select id="getFriendsByQuery" resultMap="BaseResultMap">
+    select *
+    from friend
+  </select>
+
+</mapper>

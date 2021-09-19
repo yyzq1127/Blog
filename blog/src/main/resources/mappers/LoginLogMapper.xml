@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.LoginLogMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.LoginLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="ip_source" jdbcType="VARCHAR" property="ipSource" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="user_agent" jdbcType="VARCHAR" property="userAgent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, ip, ip_source, os, browser, status, description, create_time, user_agent
+  </sql>
+<!--  删除操作-->
+  <delete id="delete">
+    delete from login_log
+    where id = #{id}
+  </delete>
+
+<!--  条件查询-->
+  <select id="getLoginLogs" resultType="com.yk.entity.LoginLog">
+    select * from login_log
+    <if test="date1 != null">
+      where create_time>=#{date1}
+      <![CDATA[  and create_time<=#{date2}    ]]>
+    </if>
+  </select>
+</mapper>

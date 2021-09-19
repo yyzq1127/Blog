@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yk.dao.SiteSettingMapper">
+  <resultMap id="BaseResultMap" type="com.yk.entity.SiteSetting">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name_en" jdbcType="VARCHAR" property="nameEn" />
+    <result column="name_zh" jdbcType="VARCHAR" property="nameZh" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yk.entity.SiteSetting">
+    <result column="value" jdbcType="LONGVARCHAR" property="value" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name_en, name_zh, type
+  </sql>
+  <sql id="Blob_Column_List">
+    value
+  </sql>
+
+<!--添加操作-->
+  <insert id="addSetting" useGeneratedKeys="true" keyProperty="id">
+    insert into site_setting
+    (name_en,name_zh,type,value)
+    value (#{nameEn},#{nameZh},#{type},#{value})
+  </insert>
+  <!--通过id更新-->
+  <update id="updateById">
+    update site_setting
+    set name_en=#{nameEn},name_zh=#{nameZh},type=#{type},value=#{value}
+    where id = #{id}
+  </update>
+<!--  批量删除-->
+  <delete id="deleteByIds">
+    delete from site_setting
+    <where>
+      id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
+<!--  查询所有站点信息-->
+  <select id="getSiteSettingData" resultType="com.yk.entity.SiteSetting">
+    select * from site_setting
+  </select>
+
+<!--  查询友链页面信息-->
+  <select id="getFriendInfo" resultType="com.yk.entity.SiteSetting">
+    select * from site_setting
+    where type = 4
+  </select>
+
+</mapper>
